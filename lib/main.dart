@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models.dart';
-import 'flip_card.dart'; // Assuming you've saved the FlipCard widget in a separate file
+import 'flip_card.dart';
 
 void main() => runApp(FlashcardApp());
 
@@ -77,7 +77,10 @@ class _DeckListScreenState extends State<DeckListScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CardListScreen(deck: deck, addNewCard: addNewCard),
+                  builder: (context) => CardListScreen(
+                    deck: deck,
+                    addNewCard: addNewCard,
+                  ),
                 ),
               );
             },
@@ -142,7 +145,7 @@ class NewDeckScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 addNewDeck(_deckNameController.text);
-                Navigator.pop(context); // Close the screen after adding deck
+                Navigator.pop(context);
               },
               child: Text('Add Deck'),
             ),
@@ -192,7 +195,13 @@ class _CardListScreenState extends State<CardListScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NewCardScreen(deck: widget.deck, addNewCard: widget.addNewCard),
+              builder: (context) => NewCardScreen(
+                deck: widget.deck,
+                addNewCard: widget.addNewCard,
+                onCardAdded: () {
+                  setState(() {});
+                },
+              ),
             ),
           );
         },
@@ -223,7 +232,6 @@ class CardDetailScreen extends StatelessWidget {
               answer: card.answer,
             ),
             SizedBox(height: 8.0),
-            // You can add other buttons or UI elements here for additional functionality
           ],
         ),
       ),
@@ -234,8 +242,9 @@ class CardDetailScreen extends StatelessWidget {
 class NewCardScreen extends StatelessWidget {
   final Deck deck;
   final Function(Deck, FlashCard) addNewCard;
+  final VoidCallback? onCardAdded;
 
-  NewCardScreen({required this.deck, required this.addNewCard});
+  NewCardScreen({required this.deck, required this.addNewCard, this.onCardAdded});
 
   final TextEditingController _questionController = TextEditingController();
   final TextEditingController _answerController = TextEditingController();
@@ -269,7 +278,10 @@ class NewCardScreen extends StatelessWidget {
                   answer: _answerController.text,
                 );
                 addNewCard(deck, newCard);
-                Navigator.pop(context); // Close the screen after adding card
+                Navigator.pop(context);
+                if (onCardAdded != null) {
+                  onCardAdded!();
+                }
               },
               child: Text('Add Card'),
             ),
