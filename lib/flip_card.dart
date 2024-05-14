@@ -86,26 +86,29 @@ class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin
         borderRadius: BorderRadius.circular(8.0),
       ),
       padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Question',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Question',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            question,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
+            SizedBox(height: 8.0),
+            Text(
+              question,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -117,26 +120,29 @@ class _FlipCardState extends State<FlipCard> with SingleTickerProviderStateMixin
         borderRadius: BorderRadius.circular(8.0),
       ),
       padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Answer',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Answer',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          SizedBox(height: 8.0),
-          Text(
-            answer,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
+            SizedBox(height: 8.0),
+            Text(
+              answer,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
