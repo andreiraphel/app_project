@@ -153,22 +153,27 @@ class NewDeckScreen extends StatelessWidget {
   }
 }
 
-class CardListScreen extends StatelessWidget {
+class CardListScreen extends StatefulWidget {
   final Deck deck;
   final Function(Deck, FlashCard) addNewCard;
 
   CardListScreen({required this.deck, required this.addNewCard});
 
   @override
+  _CardListScreenState createState() => _CardListScreenState();
+}
+
+class _CardListScreenState extends State<CardListScreen> {
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(deck.name),
+        title: Text(widget.deck.name),
       ),
       body: ListView.builder(
-        itemCount: deck.cards.length,
+        itemCount: widget.deck.cards.length,
         itemBuilder: (context, index) {
-          final card = deck.cards[index];
+          final card = widget.deck.cards[index];
           return ListTile(
             title: Text(card.question),
             onTap: () {
@@ -187,7 +192,7 @@ class CardListScreen extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NewCardScreen(deck: deck, addNewCard: addNewCard),
+              builder: (context) => NewCardScreen(deck: widget.deck, addNewCard: widget.addNewCard),
             ),
           );
         },
@@ -196,8 +201,6 @@ class CardListScreen extends StatelessWidget {
     );
   }
 }
-
-
 
 class CardDetailScreen extends StatelessWidget {
   final FlashCard card;
@@ -227,7 +230,6 @@ class CardDetailScreen extends StatelessWidget {
     );
   }
 }
-
 
 class NewCardScreen extends StatelessWidget {
   final Deck deck;
