@@ -24,9 +24,7 @@ class DeckListScreen extends StatefulWidget {
 }
 
 class _DeckListScreenState extends State<DeckListScreen> {
-  final List<Deck> decks = [
-    Deck(id: '1', name: 'Sample Deck', cards: [])
-  ];
+  final List<Deck> decks = []; // Start with an empty list
 
   @override
   Widget build(BuildContext context) {
@@ -67,26 +65,28 @@ class _DeckListScreenState extends State<DeckListScreen> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: decks.length,
-        itemBuilder: (context, index) {
-          final deck = decks[index];
-          return ListTile(
-            title: Text(deck.name),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CardListScreen(
-                    deck: deck,
-                    addNewCard: addNewCard,
-                  ),
-                ),
-              );
-            },
-          );
-        },
-      ),
+      body: decks.isEmpty
+          ? Center(child: Text('No decks available. Add a new deck.'))
+          : ListView.builder(
+              itemCount: decks.length,
+              itemBuilder: (context, index) {
+                final deck = decks[index];
+                return ListTile(
+                  title: Text(deck.name),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CardListScreen(
+                          deck: deck,
+                          addNewCard: addNewCard,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -244,7 +244,8 @@ class NewCardScreen extends StatelessWidget {
   final Function(Deck, FlashCard) addNewCard;
   final VoidCallback? onCardAdded;
 
-  NewCardScreen({required this.deck, required this.addNewCard, this.onCardAdded});
+  NewCardScreen(
+      {required this.deck, required this.addNewCard, this.onCardAdded});
 
   final TextEditingController _questionController = TextEditingController();
   final TextEditingController _answerController = TextEditingController();
