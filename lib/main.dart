@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'models.dart';
 import 'flip_card.dart';
+import 'flashcardViewerScreen.dart';
 
 void main() => runApp(FlashcardApp());
 
@@ -73,17 +74,37 @@ class _DeckListScreenState extends State<DeckListScreen> {
                 final deck = decks[index];
                 return ListTile(
                   title: Text(deck.name),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CardListScreen(
-                          deck: deck,
-                          addNewCard: addNewCard,
-                        ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.play_arrow),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  FlashcardViewerScreen(deck: deck),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
+                      IconButton(
+                        icon: Icon(Icons.add),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => NewCardScreen(
+                                deck: deck,
+                                addNewCard: addNewCard,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 );
               },
             ),
