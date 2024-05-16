@@ -3,23 +3,17 @@ import 'models.dart';
 
 class FlashcardViewerScreen extends StatefulWidget {
   final Deck deck;
+  final ReviewSettings reviewSettings;
 
-  FlashcardViewerScreen({required this.deck});
+  FlashcardViewerScreen({required this.deck, required this.reviewSettings});
 
   @override
   _FlashcardViewerScreenState createState() => _FlashcardViewerScreenState();
 }
 
 class _FlashcardViewerScreenState extends State<FlashcardViewerScreen> {
-  int _currentIndex = 0;
+  PageController _pageController = PageController();
   bool _showAnswer = false;
-
-  void _nextCard() {
-    setState(() {
-      _currentIndex = (_currentIndex + 1) % widget.deck.cards.length;
-      _showAnswer = false;
-    });
-  }
 
   void _flipCard() {
     setState(() {
@@ -27,46 +21,100 @@ class _FlashcardViewerScreenState extends State<FlashcardViewerScreen> {
     });
   }
 
+  void _markCardCorrect(FlashCard card) {
+    setState(() {
+      card.correctCount += 1;
+      card.nextReviewDate = DateTime.now().add(Duration(
+        days: (widget.reviewSettings.initialInterval *
+                widget.reviewSettings.intervalMultiplier)
+            .toInt(),
+      ));
+    });
+  }
+
+  void _markCardIncorrect(FlashCard card) {
+    setState(() {
+      card.incorrectCount += 1;
+      card.nextReviewDate = DateTime.now().add(Duration(
+        days: widget.reviewSettings.initialInterval,
+      ));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.deck.cards.isEmpty) {
+    final reviewCards = widget.deck.cards
+        .where((card) => card.nextReviewDate.isBefore(DateTime.now()))
+        .toList();
+
+    if (reviewCards.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           title: Text(widget.deck.name),
         ),
         body: Center(
-          child: Text('No cards in this deck.'),
+          child: Text('No cards to review.'),
         ),
       );
     }
-
-    final currentCard = widget.deck.cards[_currentIndex];
 
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.deck.name),
       ),
-      body: Center(
-        child: GestureDetector(
-          onTap: _flipCard,
-          child: Card(
-            margin: EdgeInsets.all(16.0),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(
-                child: Text(
-                  _showAnswer ? currentCard.answer : currentCard.question,
-                  style: TextStyle(fontSize: 24.0),
-                  textAlign: TextAlign.center,
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: reviewCards.length,
+        itemBuilder: (context, index) {
+          final card = reviewCards[index];
+          return GestureDetector(
+            onTap: _flipCard,
+            child: Card(
+              margin: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      _showAnswer ? card.answer : card.question,
+                      style: TextStyle(fontSize: 24.0),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16.0),
+                    if (_showAnswer) ...[
+                      ElevatedButton(
+                        onPressed: () {
+                          _markCardCorrect(card);
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
+                        },
+                        child: Text('Correct'),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          _markCardIncorrect(card);
+                          _pageController.nextPage(
+                            duration: Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                          );
+                        },
+                        child: Text('Incorrect'),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _nextCard,
-        child: Icon(Icons.navigate_next),
+          );
+        },
+        onPageChanged: (index) {
+          setState(() {
+            _showAnswer = false;
+          });
+        },
       ),
     );
   }
