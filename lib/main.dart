@@ -26,6 +26,11 @@ class DeckListScreen extends StatefulWidget {
 
 class _DeckListScreenState extends State<DeckListScreen> {
   final List<Deck> decks = []; // Start with an empty list
+  final ReviewSettings reviewSettings = ReviewSettings(
+    initialInterval: 1,
+    intervalMultiplier: 2.0,
+    sessionDuration: 30,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -83,8 +88,10 @@ class _DeckListScreenState extends State<DeckListScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  FlashcardViewerScreen(deck: deck),
+                              builder: (context) => FlashcardViewerScreen(
+                                deck: deck,
+                                reviewSettings: reviewSettings,
+                              ),
                             ),
                           );
                         },
@@ -265,8 +272,11 @@ class NewCardScreen extends StatelessWidget {
   final Function(Deck, FlashCard) addNewCard;
   final VoidCallback? onCardAdded;
 
-  NewCardScreen(
-      {required this.deck, required this.addNewCard, this.onCardAdded});
+  NewCardScreen({
+    required this.deck,
+    required this.addNewCard,
+    this.onCardAdded,
+  });
 
   final TextEditingController _questionController = TextEditingController();
   final TextEditingController _answerController = TextEditingController();
@@ -298,6 +308,7 @@ class NewCardScreen extends StatelessWidget {
                   id: UniqueKey().toString(),
                   question: _questionController.text,
                   answer: _answerController.text,
+                  nextReviewDate: DateTime.now(),
                 );
                 addNewCard(deck, newCard);
                 Navigator.pop(context);
